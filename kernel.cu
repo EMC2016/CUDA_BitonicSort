@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctime>
 #include <chrono>
+#include <cuda_runtime.h>
 #include <algorithm>
 #include <iostream>
 
