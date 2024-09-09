@@ -3,17 +3,17 @@
 The codes `kernel.cu` aim to implement the bitonic sort algorithm on a GPU to achieve parallel computing. 
 
 ## Implementation
-1 Calculate the size of array in GPU. Round the size of input array to the nearest power of 2. 
+1. Calculate the size of array in GPU. Round the size of input array to the nearest power of 2. 
 
-2 Copy the original data to GPU’s global memory. Initialize extra elements with large number 1001.
+2. Copy the original data to GPU’s global memory. Initialize extra elements with large number 1001.
 
-3 Calculate the proper block size **B**, gride size **G** and number of elements each thread needs to handle **T**.  
+3. Calculate the proper block size **B**, gride size **G** and number of elements each thread needs to handle **T**.  
 
-4 Kernel function `BlockBitonicSortCuda()`: Using shared memory in each block to sort. Split the whole array into **G** blocks, each block sorts its portion of the array using shared memory. Blocks with even indices sort their elements in non-decreasing order. Blocks with odd indices sort their elements in non-increasing order.
+4. Kernel function `BlockBitonicSortCuda()`: Using shared memory in each block to sort. Split the whole array into **G** blocks, each block sorts its portion of the array using shared memory. Blocks with even indices sort their elements in non-decreasing order. Blocks with odd indices sort their elements in non-increasing order.
 
-5 Kernel function `BitoincSortCuda()`: Merge the sorted subarray in step 4 into one. Each thread performs a single comparison of two element in the GPU’s global memory. The outer loop and inner loop of the sort all run in CPU. For each iteration of the inner loop, the kernel function is called to perform comparisons and swaps. 
+5. Kernel function `BitoincSortCuda()`: Merge the sorted subarray in step 4 into one. Each thread performs a single comparison of two element in the GPU’s global memory. The outer loop and inner loop of the sort all run in CPU. For each iteration of the inner loop, the kernel function is called to perform comparisons and swaps. 
 
-6 Copy the sorted array from the GPU's global memory back to the host memory. 
+6. Copy the sorted array from the GPU's global memory back to the host memory. 
 
 ## Optimization Strategies
 The total complexity of bitonic sort is O(n \log^2 n) for serialized computing. 
