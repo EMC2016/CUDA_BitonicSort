@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
+//**OPT5: Bit Operations replace modulo and division operations.
 __global__ void BlockBitonicSortCuda(int* A,int size, int threadSize){
     extern __shared__ int shareA[];
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -97,18 +98,21 @@ int main(int argc, char* argv[]) {
 
     srand(time(NULL));
 
-    
-    int* arrCpu = (int*)malloc(size * sizeof(int));
-    int* arrSortedGpu = (int*)malloc(size * sizeof(int));
+     // arCpu contains the input random array.
+    // arrSortedGpu should contain the sorted array copied from GPU to CPU.
+    //***OPT1: Allocates page-locked memory on the host to sppeedup memcpy from CPU to GPU.
+    int* arrCpu;
+    cudaMallocHost(&arrCpu, size*sizeof(int));
+    int* arrSortedGpu;
+    cudaMallocHost(&arrSortedGpu,size*sizeof(int));
 
     for (int i = 0; i < size; i++) {
         arrCpu[i] = rand() % 1000;
     }
 
-   
+    //Adjust size of the array arrCpu and copy from CPU to GPU.
     int *A;
     int n = size;
-
     n--;           
     n |= n >> 1;  
     n |= n >> 2;   
@@ -119,7 +123,9 @@ int main(int argc, char* argv[]) {
     cudaMallocManaged(&A, n * sizeof(int));
     cudaMemcpy(A, arrCpu, size* sizeof(int), cudaMemcpyHostToDevice);
 
-    
+    //Calculate block and grid size, call kernel function to sort data in each block.
+    //***OPT2: Employing shared memory of each block.
+    //***OPT3: Threads in each block operate in parallel.
     int blockSize;   
     int minGridSize; 
     int gridSize; 
@@ -131,7 +137,8 @@ int main(int argc, char* argv[]) {
     BlockBitonicSortCuda<<<gridSize, blockSize, threadSize*blockSize*sizeof(int)>>>(A,size,threadSize);
     cudaDeviceSynchronize();
     
-
+    //Merge sorted data in each block.
+    //***OPT4: Threads in each block operate in parallel.
     for (int i = blockSize*threadSize*2;i<=n;i *=2){
         for (int j = i>>1; j>0; j >>=1){
             BitoincSortCuda<<<gridSize*threadSize, blockSize>>>(A,i,j);
@@ -139,11 +146,11 @@ int main(int argc, char* argv[]) {
         }
     }
     
-
+    //Copy sorted data from GPU to CPU.
     cudaMemcpy(arrSortedGpu, A, size* sizeof(int), cudaMemcpyDeviceToHost);    
     cudaFree(A);
-    free(arrCpu);
-    free(arrSortedGpu);
+    cudaFreeHost(arrCpu); 
+    cudaFreeHost(arrSortedGpu);
     
 
     return 0;

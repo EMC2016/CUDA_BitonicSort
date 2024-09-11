@@ -16,7 +16,7 @@ The codes `kernel.cu` aim to implement the bitonic sort algorithm on a GPU to ac
 6. Copy the sorted array from the GPU's global memory back to the host memory. 
 
 ## Optimization Strategies
-The total complexity of bitonic sort is O(n \log^2 n) for serialized computing. 
+The total complexity of bitonic sort is O(nlog^2 n) for serialized computing. 
 
 Several techniques are performed to improve its performance:
 
