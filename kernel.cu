@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <iostream>
 
-//**OPT5: Bit Operations replace modulo and division operations.
+//***OPT5: Bit Operations replace modulo and division operations.
 __global__ void BlockBitonicSortCuda(int* A,int size, int threadSize){
     extern __shared__ int shareA[];
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
