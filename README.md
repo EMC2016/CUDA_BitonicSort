@@ -32,3 +32,6 @@ Several techniques are performed to improve its performance:
 
  By implementing these optimization techniques, the Bitonic Sort algorithm can achieve significantly improved efficiency. The primary bottleneck of current implementation lies in merging sorted subarrays as function `BitoincSortCuda()` is called for every inner iteration loop.  Implementing alternative algorithms or optimizations specifically tailored for this merging process may further enhance overall performance.
 
+ ## Codes
+Codes are available upon request. 
+
